@@ -1,3 +1,4 @@
+import axios from "axios";
 const Card = (makale) => {
   // GÖREV 5
   // ---------------------
@@ -17,7 +18,34 @@ const Card = (makale) => {
   //   </div>
   // </div>
   //
-}
+
+  const card = document.createElement("div");
+  card.classList.add("card");
+  const headLine = document.createElement("div");
+  headLine.classList.add("headline");
+  headLine.textContent = makale.anabaslik;
+  const authorInfo = document.createElement("div");
+  authorInfo.classList.add("author");
+
+  card.append(headLine, authorInfo);
+
+  const imgContainer = document.createElement("div");
+  imgContainer.classList.add("img-container");
+  authorInfo.appendChild(imgContainer);
+
+  const authorImg = document.createElement("img");
+  authorImg.setAttribute("src", makale.yazarFoto);
+
+  const authorName = document.createElement("span");
+  authorName.textContent = `${makale.yazarAdi} tarafından`;
+  imgContainer.append(authorImg, authorName);
+
+  card.setAttribute("id", makale.id);
+  card.addEventListener("click", () => {
+    console.log(makale.anabaslik);
+  });
+  return card;
+};
 
 const cardEkleyici = (secici) => {
   // GÖREV 6
@@ -28,6 +56,42 @@ const cardEkleyici = (secici) => {
   // Card bileşenini kullanarak yanıttaki her makale nesnesinden bir kart oluşturun.
   // Her cardı, fonksiyona iletilen seçiciyle eşleşen DOM'daki öğeye ekleyin.
   //
-}
+  const makaleContainer = document.querySelector(secici);
+  axios
+    .get("http://localhost:5001/api/makaleler")
+    .then(function (response) {
+      console.log(response);
+      const makalelerArray1 = response.data.makaleler.javascript;
+      const makalelerArray2 = response.data.makaleler.bootstrap;
+      const makalelerArray3 = response.data.makaleler.teknoloji;
+      const makalelerArray4 = response.data.makaleler.jquery;
+      const makalelerArray5 = response.data.makaleler["node.js"];
 
-export { Card, cardEkleyici }
+      makalelerArray1.forEach((makale) => {
+        const card1 = Card(makale);
+        makaleContainer.appendChild(card1);
+      });
+      makalelerArray2.forEach((makale) => {
+        const card2 = Card(makale);
+        makaleContainer.appendChild(card2);
+      });
+      makalelerArray3.forEach((makale) => {
+        const card3 = Card(makale);
+        makaleContainer.appendChild(card3);
+      });
+      makalelerArray4.forEach((makale) => {
+        const card4 = Card(makale);
+        makaleContainer.appendChild(card4);
+      });
+      makalelerArray5.forEach((makale) => {
+        const card5 = Card(makale);
+        makaleContainer.appendChild(card5);
+      });
+    })
+    .catch(function (error) {
+      makaleContainer.textContent = "Not found";
+      console.log(error);
+    });
+};
+
+export { Card, cardEkleyici };
